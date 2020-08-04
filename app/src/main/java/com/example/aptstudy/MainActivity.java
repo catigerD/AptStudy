@@ -2,6 +2,8 @@ package com.example.aptstudy;
 
 import android.os.Bundle;
 
+import com.example.eventbus.EventBus;
+import com.example.eventbus.Subscribe;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -12,6 +14,7 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                EventBus.INSTANCE.register(MainActivity.this);
             }
         });
     }
@@ -52,5 +57,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        EventBus.INSTANCE.unregister(this);
+    }
+
+    @Subscribe
+    public void testEventBus(String stringEvent) {
+        Toast.makeText(this, "收到 EventBus 事件", Toast.LENGTH_SHORT).show();
     }
 }
